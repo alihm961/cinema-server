@@ -27,4 +27,10 @@ class Booking extends Model {
             'created_at' => $this->created_at,
         ];
     }
+
+    public function getByUserId($user_id) {
+        return $this->fetchAll("
+        SELECT b.id, b.total_price, m.title, s.show_date, s.show_time FROM bookings b JOIN showtimes s ON b.showtime_id = s.id 
+        JOIN movies m ON s.movie_id = m.id WHERE b.user_id = ? ORDER BY s.show_date, s.show_time", [$user_id], "i");
+    }
 }
