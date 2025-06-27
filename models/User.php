@@ -26,4 +26,18 @@ class User extends Model {
             'phone' => $this->phone
         ];
     }
+
+    public static function getByEmail(mysqli $mysqli, string $email): ?User {
+        $stmt = $mysqli->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+
+        return $data ? new static($data) : null;
+    }
+
+    public function getPassword(): string {
+        return $this->password;
+    }
 }
