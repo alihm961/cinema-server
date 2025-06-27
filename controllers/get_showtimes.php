@@ -1,16 +1,22 @@
 <?php
-require_once(__DIR__ . '/../connection/connection.php');
-require_once(__DIR__ . '/../models/Showtime.php');
+require_once("../models/Showtime.php");
+require_once("../connection/connection.php");
 
-$response = [
-    "status" => 200,
-    "message" => []
-];
+$response = ["status" => 200];
 
-$showtimes = Showtime::all($mysqli);
-
-foreach ($showtimes as $showtime) {
-    $response["showtimes"][] = $showtime->toArray();
+if (!isset($_GET["id"])) {
+    $items = Showtime::all($mysqli);
+    $response["showtimes"] = [];
+    foreach ($items as $item) {
+        $response["showtimes"][] = $item->toArray();
+    }
+    echo json_encode($response);
+    return;
 }
 
+$id = $_GET["id"];
+$item = Showtime::find($mysqli, $id);
+$response["showtime"] = $item->toArray();
 echo json_encode($response);
+return;
+?>

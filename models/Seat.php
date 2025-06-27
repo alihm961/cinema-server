@@ -1,13 +1,37 @@
 <?php
-require_once('Model.php');
+
+require_once(__DIR__ . "/Model.php");
 
 class Seat extends Model {
-    public function getByShowtime($showtime_id) {
-        $query = 
-        "SELECT s.*, IF (bs.id IS NULL, 'available', 'booked') AS status
-        From seats s LEFT JOIN booking_seats bs ON bs,seat_id = s.id
-        LEFT JOIN bookings b ON b.id = bs.booking_id WHERE b.showtime_id = ? OR b.showtime_id IS NULL";
+    protected int $id;
+    protected string $seat_number;
+    protected string $screen;
 
-        return $this->fetchAll($query, [$showtime_id], "i");
+    protected static string $table = "seats";
+
+    public function __construct(array $data) {
+        $this->id = $data['id'] ?? 0;
+        $this->seat_number = $data['seat_number'] ?? '';
+        $this->screen = $data['screen'] ?? '';
+    }
+
+    public function toArray(): array {
+        return [
+            'id' => $this->id,
+            'seat_number' => $this->seat_number,
+            'screen' => $this->screen,
+        ];
+    }
+
+    public function save(mysqli $mysqli): bool {
+        $sql = "INSERT INTO seats (id, seat_number, screen) VALUES (?, ?, ?)";
+        $stmt = $mysqli->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $mysqli->error);
+        }
+
+        $stmt->bind_param("iss", $this->id, $this->seat_number, $this->screen);
+        return $stmt->execute();
     }
 }

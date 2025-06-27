@@ -1,24 +1,22 @@
 <?php
-require_once("../models/Movie.php");
+require_once("../models/Booking.php");
 require_once("../connection/connection.php");
 
 $response = ["status" => 200];
 
 if (!isset($_GET["id"])) {
-    $items = Movie::all ($mysqli);
-    $response["movies"] = [];
+    $items = Booking::all($mysqli);
+    $response["bookings"] = [];
     foreach ($items as $item) {
-        $response["movies"][] = $item->toArray();
+        $response["bookings"][] = $item->toArray();
     }
-
     echo json_encode($response);
     return;
 }
 
 $id = $_GET["id"];
-$item = Movie::find($mysqli, $id);
-$response["movie"] = $item->toArray();
+$item = Booking::find($mysqli, $id);
+$response["booking"] = $item->toArray();
 echo json_encode($response);
 return;
-
 ?>

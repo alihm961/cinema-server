@@ -26,4 +26,34 @@ abstract class Model{
         }
         return $objects;
     }
+
+    public function save(mysqli $mysqli): bool {
+    $data = $this->toArray();  // Only get defined public fields
+    $columns = implode(", ", array_keys($data));
+    $placeholders = rtrim(str_repeat("?, ", count($data)), ", ");
+
+    $sql = "INSERT INTO " . static::$table . " ($columns) VALUES ($placeholders)";
+    $stmt = $mysqli->prepare($sql);
+
+    if (!$stmt) {
+        throw new Exception("prepare failed: " . $mysqli->error);
+    }
+
+    $types = "";
+    $values = [];
+
+    foreach ($data as $value) {
+        if (is_int($value)) {
+            $types .= "i";
+        } elseif (is_float($value)) {
+            $types .= "d";
+        } else {
+            $types .= "s";
+        }
+        $values[] = $value;
+    }
+
+    $stmt->bind_param($types, ...$values);
+    return $stmt->execute();
+}
 }

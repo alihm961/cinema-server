@@ -27,6 +27,14 @@ class User extends Model {
         ];
     }
 
+    public function save(mysqli $conn): bool {
+        $stmt = $conn->prepare("INSERT INTO users (email, password, name, phone) VALUES (?, ?, ?, ?)");
+        if (!$stmt) return false;
+
+        $stmt->bind_param("ssss", $this->email, $this->password, $this->name, $this->phone);
+        return $stmt->execute();
+    }
+
     public static function getByEmail(mysqli $mysqli, string $email): ?User {
         $stmt = $mysqli->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -35,6 +43,14 @@ class User extends Model {
         $data = $result->fetch_assoc();
 
         return $data ? new static($data) : null;
+    }
+
+    public function getId(): int {
+        return $this->id;
+    }
+
+    public function checkPassword(string $password): bool {
+        return $this->password === $password;
     }
 
     public function getPassword(): string {

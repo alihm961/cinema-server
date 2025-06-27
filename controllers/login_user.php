@@ -1,22 +1,24 @@
 <?php
-require_once(__DIR__ . '/../connection/connection.php');
-require_once(__DIR__ . '/../models/User.php');
+require_once("../models/User.php");
+require_once("../connection/connection.php");
 
-$response = [
-    "status" => 400, "message" => "Invalid email or password"
-];
+session_start();
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+$email = $_POST['email'] ?? null;
+$password = $_POST['password'] ?? null;
 
-    $user = User::getByEmail($mysqli, $email);
-
-    if ($user && password_verify($password, $user->getPassword())) {
-        $response['status'] = 200;
-        $response['message'] = "Login successful";
-        $response['user'] = $user->toArray();
-    }
+if (!$email || !$password) {
+    echo json_encode(["status" => 400, "message" => "Email and password are required"]);
+    exit;
 }
 
-echo json_encode($response);
+$user = User::getByEmail($mysqli, $email);
+
+if (!$user || !$user->checkPassword($password)) {
+    http_response_code(401);
+    echo json_encode(["status" => 401, "message" => "Invalid credentials"]);
+    exit;
+}
+
+$_SESSION['user_id'] = $user->getId();
+echo json_encode(["status" => 200, "message" => "Login successful", "user" => $user->toArray()]);
