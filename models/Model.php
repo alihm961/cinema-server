@@ -28,7 +28,7 @@ abstract class Model{
     }
 
     public function save(mysqli $mysqli): bool {
-    $data = $this->toArray();  // Only get defined public fields
+    $data = $this->toArray();
     $columns = implode(", ", array_keys($data));
     $placeholders = rtrim(str_repeat("?, ", count($data)), ", ");
 
@@ -36,7 +36,7 @@ abstract class Model{
     $stmt = $mysqli->prepare($sql);
 
     if (!$stmt) {
-        throw new Exception("prepare failed: " . $mysqli->error);
+        throw new Exception(" Error : " . $mysqli->error);
     }
 
     $types = "";
