@@ -1,27 +1,28 @@
 <?php
-require_once(__DIR__ . "/Model.php");
+require_once ("Model.php");
 
 class Booking extends Model {
-    private int $id;
-    private int $user_id;
-    private int $showtime_id;
-    private float $total_price;
-
     protected static string $table = "bookings";
 
-    public function __construct(array $data) {
-        $this->id = $data['id'] ?? 0;
-        $this->user_id = $data['user_id'];
-        $this->showtime_id = $data['showtime_id'];
-        $this->total_price = $data['total_price'];
+    public int $user_id;
+    public int $showtime_id;
+    public string $seat_number;
+    public string $status;
+
+    public function __construct($data = []) {
+        $this->user_id = $data["user_id"] ?? 0;
+        $this->showtime_id = $data["showtime_id"] ?? 0;
+        $this->seat_number = $data["seat_number"] ?? "";
+        $this->status = $data["status"] ?? "confirmed";
     }
 
     public function toArray(): array {
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'showtime_id' => $this->showtime_id,
-            'total_price' => $this->total_price,
+            "user_id" => $this->user_id,
+            "showtime_id" => $this->showtime_id,
+            "seat_number" => $this->seat_number,
+            "status" => $this->status
         ];
     }
 }
+?>

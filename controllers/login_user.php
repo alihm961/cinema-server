@@ -1,24 +1,26 @@
 <?php
-require_once("../models/User.php");
-require_once("../connection/connection.php");
+require_once "../connection/connection.php";
 
-session_start();
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST");
 
-$email = $_POST['email'] ?? null;
-$password = $_POST['password'] ?? null;
+$input = json_decode(file_get_contents("php://input"), true);
+$email = $input["email"] ?? null;
+$password = $input["password"] ?? null;
 
-if (!$email || !$password) {
-    echo json_encode(["status" => 400, "message" => "Email and password are required"]);
-    exit;
+$sql = "SELECT * FROM users WHERE email=? AND password=?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("ss", $email, $password);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
+if ($user) {
+  echo json_encode([
+    "status" => 200,
+    "user_id" => $user["id"],
+    "is_admin" => $user["is_admin"]
+  ]);
+} else {
+  echo json_encode(["status" => 401, "message" => "Invalid credentials"]);
 }
-
-$user = User::getByEmail($mysqli, $email);
-
-if (!$user || !$user->checkPassword($password)) {
-    http_response_code(401);
-    echo json_encode(["status" => 401, "message" => "Invalid credentials"]);
-    exit;
-}
-
-$_SESSION['user_id'] = $user->getId();
-echo json_encode(["status" => 200, "message" => "Login successful", "user" => $user->toArray()]);

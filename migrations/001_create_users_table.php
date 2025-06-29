@@ -1,16 +1,15 @@
 <?php
-require_once(__DIR__ . '/../connection/connection.php');
+require_once "../connection/connection.php";
 
-$query = "
-CREATE TABLE IF NOT EXISTs users (
-id INT AUTO_INCREMENT PRIMARY KEY,
-email VARCHAR(255) NOT NULL UNIQUE,
-password VARCHAR(255) NOT NULL,
-name VARCHAR(255),
-phone VARCHAR(20),
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-";
+$sql = "CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(100),
+    phone VARCHAR(20),
+    is_adult BOOLEAN DEFAULT 0,
+    is_admin BOOLEAN DEFAULT 0
+)";
+$mysqli->query($sql);
 
-$statment = $mysqli->prepare($query);
-$statment->execute();
+?>

@@ -1,30 +1,28 @@
 <?php
-require_once(__DIR__ . "/Model.php");
+require_once("Model.php");
 
 class SnackOrder extends Model {
-    private int $id;
-    private int $booking_id;
-    private string $snack_name;
-    private int $quantity;
-    private float $price;
-
     protected static string $table = "snack_orders";
 
-    public function __construct(array $data) {
-        $this->id = $data['id'] ?? 0;
-        $this->booking_id = $data['booking_id'];
-        $this->snack_name = $data['snack_name'];
-        $this->quantity = $data['quantity'];
-        $this->price = $data['price'];
+    public int $user_id;
+    public string $snack_name;
+    public int $quantity;
+    public float $price;
+
+    public function __construct($data = []) {
+        $this->user_id = $data["user_id"] ?? 0;
+        $this->snack_name = $data["snack_name"] ?? "";
+        $this->quantity = $data["quantity"] ?? 1;
+        $this->price = $data["price"] ?? 0.0;
     }
 
     public function toArray(): array {
         return [
-            'id' => $this->id,
-            'booking_id' => $this->booking_id,
-            'snack_name' => $this->snack_name,
-            'quantity' => $this->quantity,
-            'price' => $this->price,
+            "user_id" => $this->user_id,
+            "snack_name" => $this->snack_name,
+            "quantity" => $this->quantity,
+            "price" => $this->price
         ];
     }
 }
+?>

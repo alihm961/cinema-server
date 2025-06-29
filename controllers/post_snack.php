@@ -1,5 +1,6 @@
 <?php
-require_once "../models/Showtime.php";
+require_once "../models/Snack.php";
+require_once "../models/SnackOrder.php";
 require_once "../connection/connection.php";
 
 $admin_id = $_POST["admin_id"] ?? "";
@@ -9,6 +10,6 @@ if (!$admin_id) {
     exit;
 }
 
-$showtime = new Showtime($_POST);
-$showtime->save($mysqli);
-echo json_encode(["status" => 200, "message" => "Showtime added"]);
+$snack = new SnackOrder($_POST);
+$snack->save($mysqli);
+echo json_encode(["status" => 200, "message" => "Snacks added"]);
